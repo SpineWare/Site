@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpineWare | Best Roblox Script Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+        
+        :root {
+            --primary: #64b4ff;
+            --primary-dark: #3a9bff;
+            --discord: #5865F2;
+            --discord-dark: #4752c4;
+            --dark: #0a192f;
+            --darker: #071225;
+            --grid: #132a58;
+            --feature-bg: rgba(16, 42, 87, 0.4);
+            --card-border: rgba(100, 180, 255, 0.3);
+            --text-light: rgba(255,255,255,0.9);
+            --text-lighter: rgba(255,255,255,0.7);
+            --success: #4BB543;
+            
+            --lua-white: #ffffff;
+            --lua-gray: #aaaaaa;
+            --lua-red: #ff5555;
+            --lua-pink: #ff79c6;
+            --lua-green: #50fa7b;
+            --lua-blue: #8be9fd;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark);
+            background-image: 
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: white;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            animation: gridMove 240s linear infinite;
+        }
+
+        ::selection {
+            background: rgba(100, 180, 255, 0.3);
+            color: white;
+            text-shadow: none;
+        }
+
+        .mouse-spotlight {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(100, 180, 255, 0.12) 0%, rgba(100, 180, 255, 0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .dark-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(10, 25, 47, 0.7) 0%, rgba(5, 12, 25, 0.95) 100%);
+            z-index: 1;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%; max-width: 900px;
+            display: flex; flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            position: relative; margin-bottom: 30px;
+            cursor: default; text-align: center;
+        }
+        .logo {
+            font-size: 5rem; font-weight: 800;
+            color: white; position: relative;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            margin: 0; line-height: 1;
+            background: linear-gradient(to right, white, #e0e0e0);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .rainbow-spot {
+            position: absolute;
+            width: 0; height: 0;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg at 50% 50%, #ff0000 0deg, #ff7f00 60deg, #ffff00 120deg, #00ff00 180deg, #0000ff 240deg, #4b0082 300deg, #ff0000 360deg);
+            pointer-events: none; filter: blur(25px) brightness(1.2);
+            opacity: 0; transform: translate(-50%, -50%) scale(0.5);
+            transition: opacity 0.4s ease, transform 0.4s ease, width 0.4s ease, height 0.4s ease;
+            z-index: -1; mix-blend-mode: screen;
+        }
+        /* --- UPDATE: Анимация логотипа теперь полностью управляется CSS для плавности --- */
+        .logo-container:hover .rainbow-spot {
+            width: 120px; height: 120px;
+            opacity: 0.7; transform: translate(-50%, -50%) scale(1);
+            animation: rainbowShimmer 2.7s infinite alternate;
+        }
+        @keyframes rainbowShimmer {
+            0% { filter: blur(25px) brightness(1.2) saturate(1); }
+            100% { filter: blur(25px) brightness(1.4) saturate(1.5); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem; color: var(--primary);
+            margin-bottom: 3rem; font-weight: 500;
+            text-align: center; position: relative;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .subtitle::after {
+            content: ''; position: absolute;
+            bottom: -1rem; left: 50%;
+            transform: translateX(-50%);
+            width: 120px; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 3px;
+        }
+
+        .features {
+            width: 100%; max-width: 900px;
+            margin-bottom: 3rem;
+        }
+        .features-title {
+            font-size: 2.5rem; font-weight: 700;
+            text-align: center; margin-bottom: 2.5rem;
+            position: relative; color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .features-title::after {
+            content: ''; position: absolute;
+            bottom: -0.8rem; left: 50%;
+            transform: translateX(-50%);
+            width: 180px; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            border-radius: 4px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.8rem;
+        }
+        .feature-card {
+            background: var(--feature-bg); border-radius: 18px;
+            padding: 2rem; border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
+            min-height: 200px; display: flex;
+            flex-direction: column; justify-content: center;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(100, 180, 255, 0.5);
+            background: rgba(16, 42, 87, 0.5);
+        }
+        .feature-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(100, 180, 255, 0.1), transparent);
+            pointer-events: none; transition: all 0.4s ease;
+        }
+        .feature-card:hover::before {
+            background: linear-gradient(135deg, rgba(100, 180, 255, 0.2), transparent);
+        }
+        .feature-title {
+            font-size: 1.7rem; font-weight: 700;
+            color: var(--primary); margin-bottom: 1.2rem;
+            position: relative; display: flex;
+            align-items: center; gap: 0.8rem; line-height: 1.3;
+        }
+        .feature-title::after {
+            content: ''; position: absolute;
+            bottom: -0.5rem; left: 2.5rem;
+            width: calc(100% - 2.5rem); height: 3px;
+            background: var(--primary); transform: scaleX(0);
+            transform-origin: left; transition: transform 0.4s ease;
+            border-radius: 3px;
+        }
+        .feature-card:hover .feature-title::after { transform: scaleX(1); }
+        .feature-desc {
+            font-size: 1.1rem; line-height: 1.7;
+            color: var(--text-light); opacity: 0.9;
+            padding-left: 2.5rem;
+        }
+        .feature-icon {
+            font-size: 1.8rem; width: 2.5rem;
+            height: 2.5rem; display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(100, 180, 255, 0.2);
+            border-radius: 8px; flex-shrink: 0;
+            transition: all 0.3s ease; position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        
+        /* --- UPDATE: Анимация глобуса исправлена --- */
+        .globe-icon { position: relative; transition: transform 0.4s ease; }
+        .feature-card:hover .globe-icon { 
+            /* Глобус больше не вращается, только увеличивается */
+            transform: scale(1.1); 
+        }
+        .globe-icon::before, .globe-icon::after {
+            content: ''; position: absolute; border-radius: 50%;
+            background: var(--primary); opacity: 0; pointer-events: none;
+        }
+        .globe-icon::before { width: 4px; height: 4px; }
+        .globe-icon::after { width: 6px; height: 6px; }
+        .feature-card:hover .globe-icon::before { animation: orbit 3s linear infinite; opacity: 1; }
+        .feature-card:hover .globe-icon::after { animation: orbit 4.5s linear infinite -1s; opacity: 1; }
+        @keyframes orbit {
+            from { transform: rotate(0deg) translateX(18px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(18px) rotate(-360deg); }
+        }
+
+        .lock-icon {
+            position: relative; display: inline-flex; width: 2.5rem; height: 2.5rem;
+            align-items: center; justify-content: center; transition: all 0.5s ease;
+        }
+        .lock-icon .fa-lock-open { position: absolute; opacity: 0; transform: rotate(-45deg) scale(0.5); transition: all 0.5s ease; }
+        .feature-card:hover .lock-icon .fa-lock { opacity: 0; transform: rotate(45deg) scale(0.5); }
+        .feature-card:hover .lock-icon .fa-lock-open { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        .bolt-icon { position: relative; transition: all 0.5s ease; }
+        .bolt-icon .fa-bolt { transition: all 0.5s ease; }
+        .feature-card:hover .bolt-icon .fa-bolt { transform: scale(1.2); color: #ffff00; text-shadow: 0 0 10px rgba(255, 255, 0, 0.5); }
+
+        /* --- UPDATE: Позиция огня ракеты исправлена --- */
+        .rocket-icon { position: relative; transition: all 0.5s ease; }
+        .feature-card:hover .rocket-icon { animation: rocketShake 0.5s ease-in-out infinite; }
+        .rocket-icon::before, .rocket-icon::after {
+            content: ''; position: absolute;
+            left: 30%; 
+            transform: translateX(-50%);
+            opacity: 0; border-radius: 50%;
+            pointer-events: none;
+        }
+        .rocket-icon::after { /* Основное пламя */
+            bottom: 8px; /* Позиция скорректирована */
+            width: 10px; height: 10px;
+            background: radial-gradient(circle, white 10%, #ff8c42 50%, #ff5733 80%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            filter: blur(2px);
+            transform: rotate(80deg);
+        }
+        .rocket-icon::before { /* Искры */
+            bottom: -4px; /* Позиция скорректирована */
+            width: 100%; height: 40px;
+            background: transparent;
+            box-shadow: 0 10px 0 2px #ffc93c, 0 20px 0 -2px #ffc93c, 0 30px 0 1px #ffc93c;
+        }
+        .feature-card:hover .rocket-icon::after { animation: rocketFlame 0.3s ease-out infinite; }
+        .feature-card:hover .rocket-icon::before { animation: rocketSparks 0.3s ease-out infinite; }
+        .feature-card:hover .rocket-icon .fa-rocket { color: #ff9999; }
+
+        @keyframes rocketShake {
+            0%, 100% { transform: translateY(0) rotate(-1deg); }
+            50% { transform: translateY(-2px) rotate(1deg); }
+        }
+        @keyframes rocketFlame {
+            0% { transform: translateX(-50%) scaleY(1); opacity: 1; }
+            50% { transform: translateX(-50%) scaleY(1.4); opacity: 0.8; }
+            100% { transform: translateX(-50%) scaleY(1); opacity: 1; }
+        }
+        @keyframes rocketSparks {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+        }
+        
+        .platform-icons { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+        .platform-icons i { font-size: 2rem; color: var(--primary); transition: all 0.3s ease; }
+        .feature-card:hover .platform-icons i { transform: scale(1.1); }
+
+        .stats { display: flex; gap: 1.5rem; margin-top: 1rem; padding-left: 2.5rem; flex-wrap: wrap; }
+        .stat-item {
+            background: rgba(100, 180, 255, 0.15); padding: 0.5rem 1rem;
+            border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+            color: var(--primary); display: flex; align-items: center;
+            transition: all 0.3s ease;
+        }
+        .stat-item i { margin-right: 0.5rem; font-size: 1rem; }
+        .feature-card:hover .stat-item { background: rgba(100, 180, 255, 0.25); transform: translateY(-2px); }
+
+        .buttons-container {
+            display: flex; flex-direction: row; gap: 1.5rem;
+            width: 100%; max-width: 600px; justify-content: center; margin-top: 1rem;
+        }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; padding: 1.2rem 2.5rem;
+            color: white; text-decoration: none; border-radius: 12px; font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-size: 1.2rem; border: none; cursor: pointer; position: relative; overflow: hidden;
+            width: 100%; flex: 1;
+        }
+        .btn::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%); transition: transform 0.7s ease;
+        }
+        .btn:hover { transform: translateY(-5px); }
+        .btn:hover::before { transform: translateX(100%); }
+        .btn i { margin-right: 0.8rem; font-size: 1.5rem; }
+        .discord-btn { background: linear-gradient(135deg, var(--discord), var(--discord-dark)); box-shadow: 0 8px 25px rgba(88, 101, 242, 0.5); }
+        .discord-btn:hover { box-shadow: 0 12px 30px rgba(88, 101, 242, 0.7); }
+        .getscript-btn { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); box-shadow: 0 8px 25px rgba(100, 180, 255, 0.5); }
+        .getscript-btn:hover { box-shadow: 0 12px 30px rgba(100, 180, 255, 0.7); }
+        
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: var(--darker); border-radius: 15px; padding: 2rem; width: 90%; max-width: 600px;
+            border: 1px solid var(--card-border); box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(20px); transition: all 0.3s ease; position: relative;
+        }
+        .modal.active .modal-content { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-title { font-size: 1.8rem; font-weight: 700; color: white; margin: 0; }
+        .close-modal { background: none; border: none; color: var(--text-lighter); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; }
+        .close-modal:hover { color: white; }
+        .script-info {
+            background: rgba(100, 180, 255, 0.1); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary); display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .script-info-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; color: var(--text-light); }
+        .script-info-item i { color: var(--primary); }
+        .script-code {
+            background: rgba(0, 0, 0, 0.3); border-radius: 8px; padding: 1.2rem;
+            font-family: 'Fira Code', monospace; font-size: 0.95rem; color: var(--primary);
+            word-break: break-all; margin-bottom: 1.5rem; border: 1px solid var(--card-border);
+            position: relative; line-height: 1.6;
+        }
+        .script-code .lua-loadstring { color: var(--lua-white); }
+        .script-code .lua-parentheses { color: var(--lua-gray); }
+        .script-code .lua-game { color: var(--lua-red); }
+        .script-code .lua-httpget { color: var(--lua-pink); }
+        .script-code .lua-string { color: var(--lua-green); text-decoration: none; transition: all 0.3s ease; position: relative; }
+        .script-code .lua-string:hover { cursor: pointer; }
+        .script-code .lua-string::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--lua-green); transform: scaleX(0); transition: transform 0.3s ease; }
+        .script-code .lua-string:hover::after { transform: scaleX(1); }
+        .copy-btn {
+            display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 8px;
+            font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; width: 100%;
+        }
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(100, 180, 255, 0.4); }
+        .copy-btn i { margin-right: 0.5rem; }
+
+        .notification {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--success); color: white; padding: 1rem 2rem; border-radius: 8px;
+            font-weight: 600; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); display: flex; align-items: center;
+            gap: 0.8rem; z-index: 101; opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .notification i { font-size: 1.2rem; }
+
+        .footer {
+            margin-top: 3rem; text-align: center; color: var(--text-lighter); font-size: 0.9rem;
+            position: relative; padding: 1rem 0; width: 100%;
+        }
+        .footer::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .footer:hover::before { width: 100%; }
+        .footer-content { position: relative; overflow: hidden; padding: 0.5rem 0; }
+        .footer-content::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(100, 180, 255, 0.1), transparent);
+            transform: translateX(-100%); transition: transform 0.6s ease;
+        }
+        .footer:hover .footer-content::before { transform: translateX(100%); }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 80px 80px; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .content > * { animation: fadeIn 0.8s ease forwards; }
+        .logo-container { animation-delay: 0.1s; }
+        .subtitle { animation-delay: 0.3s; }
+        .features { animation-delay: 0.5s; }
+        .buttons-container { animation-delay: 0.7s; }
+
+        body { -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        
+        @media (max-width: 768px) {
+            .buttons-container { flex-direction: column; gap: 1rem; }
+            .logo { font-size: 3.5rem; }
+            .subtitle { font-size: 1.2rem; margin-bottom: 2.5rem; }
+            .features-title { font-size: 2rem; margin-bottom: 2rem; }
+            .feature-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .feature-card { min-height: auto; padding: 1.5rem; }
+            .feature-title { font-size: 1.4rem; }
+            .feature-desc { font-size: 1rem; padding-left: 0; margin-left: 2.5rem; }
+            .stats { padding-left: 0; margin-left: 2.5rem; }
+            .btn { padding: 1rem 1.5rem; font-size: 1.1rem; }
+            .modal-content { padding: 1.5rem; }
+            .modal-title { font-size: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 30px 15px; }
+            .logo { font-size: 2.8rem; }
+            .subtitle { font-size: 1.1rem; }
+            .feature-card { padding: 1.2rem; }
+            .feature-title { font-size: 1.3rem; gap: 0.6rem; }
+            .feature-icon { font-size: 1.5rem; width: 2.2rem; height: 2.2rem; }
+            .feature-desc { margin-left: 2.8rem; }
+            .stats { margin-left: 2.8rem; }
+            .stat-item { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+            .footer { font-size: 0.8rem; }
+            .feature-title::after { left: 2.8rem; width: calc(100% - 2.8rem); }
+        }
+    </style>
+</head>
+<body>
+    <div class="mouse-spotlight"></div>
+    <div class="dark-overlay"></div>
+    
+    <div class="content">
+        <div class="logo-container" id="logoContainer">
+            <h1 class="logo">SpineWare</h1>
+            <div class="rainbow-spot" id="rainbowSpot"></div>
+        </div>
+        
+        <div class="subtitle">Best Roblox Script Hub</div>
+        <div class="buttons-container">
+            <a href="https://discord.gg/auzdT4PhtY" class="btn discord-btn" target="_blank">
+                <i class="fab fa-discord"></i> Join Discord
+            </a>
+            <button class="btn getscript-btn" id="getScriptBtn">
+                <i class="fas fa-code"></i> Get Script
+            </button>
+        </div>
+        <div class="features">
+            <h2 class="features-title">Why Use SpineWare?</h2>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3 class="feature-title">
+                        <span class="feature-icon globe-icon">
+                            <i class="fas fa-globe"></i>
+                        </span>
+                        Universal Support
+                    </h3>
+                    <p class="feature-desc">
+                        Works seamlessly across all platforms - whether you're on Android, iOS, or PC. 
+                        Comprehensive compatibility with all major executors.
+                    </p>
+                    <div class="platform-icons">
+                        <i class="fab fa-apple"></i>
+                        <i class="fab fa-android"></i>
+                        <i class="fab fa-windows"></i>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3 class="feature-title">
+                        <span class="feature-icon">
+                            <span class="lock-icon">
+                                <i class="fas fa-lock"></i>
+                                <i class="fas fa-lock-open"></i>
+                            </span>
+                        </span>
+                        100% Free & Keyless
+                    </h3>
+                    <p class="feature-desc">
+                        Premium features without the premium price tag — no keys, no registration, 
+                        no hidden paywalls. Enjoy complete freedom.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3 class="feature-title">
+                        <span class="feature-icon bolt-icon">
+                            <i class="fas fa-bolt"></i>
+                        </span>
+                        Instant Updates
+                    </h3>
+                    <p class="feature-desc">
+                        Our auto-update system ensures you always have the latest features 
+                        and game support without manual intervention.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3 class="feature-title">
+                        <span class="feature-icon rocket-icon">
+                            <i class="fas fa-rocket"></i>
+                        </span>
+                        Ultimate Hub
+                    </h3>
+                    <p class="feature-desc">
+                        The most extensive script collection with cutting-edge features 
+                        and unparalleled game support.
+                    </p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <i class="fas fa-gamepad"></i> 100+ Games
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i> 1K+ Users
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                © 2025 SpineWare | All Rights Reserved
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="scriptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">SpineWare Script</h3>
+                <button class="close-modal" id="closeModal">×</button>
+            </div>
+            <div class="script-info">
+                <div class="script-info-item">
+                    <i class="fas fa-check-circle"></i> 100+ games supported
+                </div>
+                <div class="script-info-item">
+                    <i class="fas fa-check-circle"></i> Support for all executors
+                </div>
+                <div class="script-info-item">
+                    <i class="fas fa-check-circle"></i> Best hub ever created
+                </div>
+            </div>
+            <div class="script-code" id="scriptCode">
+                <span class="lua-loadstring">loadstring</span><span class="lua-parentheses">(</span><span class="lua-game">game</span><span class="lua-parentheses">:</span><span class="lua-httpget">HttpGet</span><span class="lua-parentheses">(</span><span class="lua-string">"https://raw.githubusercontent.com/SpineWare/UniversalLoader/refs/heads/main/Load"</span><span class="lua-parentheses">)</span><span class="lua-parentheses">)</span><span class="lua-parentheses">()</span>
+            </div>
+            <button class="copy-btn" id="copyBtn">
+                <i class="fas fa-copy"></i> Copy to Clipboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Copied to clipboard!</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- UPDATE: Упрощенный JS для логотипа, управляет только позицией ---
+            const logoContainer = document.getElementById('logoContainer');
+            const rainbowSpot = document.getElementById('rainbowSpot');
+            if (logoContainer && rainbowSpot) {
+                 logoContainer.addEventListener('mousemove', (e) => {
+                    const rect = logoContainer.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    rainbowSpot.style.left = `${x}px`;
+                    rainbowSpot.style.top = `${y}px`;
+                });
+            }
+
+            const spotlight = document.querySelector('.mouse-spotlight');
+            if (spotlight) {
+                document.addEventListener('mousemove', e => {
+                    spotlight.style.left = e.clientX + 'px';
+                    spotlight.style.top = e.clientY + 'px';
+                });
+                document.body.addEventListener('mouseenter', () => {
+                    spotlight.style.opacity = '1';
+                });
+                document.body.addEventListener('mouseleave', () => {
+                    spotlight.style.opacity = '0';
+                });
+            }
+
+            const modal = document.getElementById('scriptModal');
+            const getScriptBtn = document.getElementById('getScriptBtn');
+            const closeModal = document.getElementById('closeModal');
+            const copyBtn = document.getElementById('copyBtn');
+            const scriptCode = document.getElementById('scriptCode');
+            const notification = document.getElementById('notification');
+
+            if (getScriptBtn) {
+                getScriptBtn.addEventListener('click', () => {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            if(closeModal) {
+                closeModal.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                });
+            }
+
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+            
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const text = scriptCode.innerText;
+                    navigator.clipboard.writeText(text).then(() => {
+                        notification.classList.add('show');
+                        setTimeout(() => {
+                            notification.classList.remove('show');
+                        }, 3000);
+                        
+                        setTimeout(() => {
+                            if (modal.classList.contains('active')) {
+                               modal.classList.remove('active');
+                               document.body.style.overflow = 'auto';
+                            }
+                        }, 500);
+                    }).catch(err => {
+                        console.error('Failed to copy text: ', err);
+                        const textarea = document.createElement('textarea');
+                        textarea.value = text;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                            document.execCommand('copy');
+                            notification.classList.add('show');
+                            setTimeout(() => notification.classList.remove('show'), 3000);
+                        } catch (e) {
+                            console.error('Fallback copy failed: ', e);
+                        }
+                        document.body.removeChild(textarea);
+                    });
+                });
+            }
+
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('touchstart', function() {}, true);
+        });
+    </script>
+</body>
+</html>
